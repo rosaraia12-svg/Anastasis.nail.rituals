@@ -449,6 +449,51 @@ body{
   color:var(--cream);
   border:1px solid rgba(244,236,229,.4);
 }
+
+.foot__info{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:36px;
+  max-width:420px;
+  margin:38px auto 0;
+  padding-top:32px;
+  border-top:1px solid rgba(244,236,229,.22);
+  text-align:left;
+}
+.foot__info-block{ min-width:170px; }
+.foot__info-label{
+  font-size:.56rem;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  opacity:.65;
+  margin-bottom:10px;
+}
+.foot__info-link{
+  display:block;
+  color:var(--cream);
+  text-decoration:none;
+  font-size:.86rem;
+  line-height:1.5;
+  border-bottom:1px solid rgba(244,236,229,.35);
+  padding-bottom:2px;
+  width:fit-content;
+}
+.foot__hours{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  font-size:.86rem;
+}
+.foot__hours li{
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+}
+.foot__hours li span:first-child{ opacity:.85; }
+.foot__hours li span:last-child{ font-variant-numeric:tabular-nums; }
+
 .foot__addr{
   margin-top:30px;
   font-size:.7rem;
