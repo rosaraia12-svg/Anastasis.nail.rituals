@@ -1,0 +1,530 @@
+/* ============================================================
+   Anastasis Nail Rituals — one-page, mobile-first.
+   A still wide shot of the studio with two tappable hotspots:
+     tap the desk    → zoom in on Nails,     listino in liquid glass
+     tap the table   → zoom in on Hands SPA, listino in liquid glass
+   "Indietro" in the glass panel plays the clip back to the still.
+   ============================================================ */
+
+:root{
+  --burgundy:#7c3b34;   /* sampled from the accent wall behind the desk */
+  --clay:#a85f4f;
+  --cream:#f4ece5;
+  --gold:#c7a06a;
+  --ink:#2c1f1a;
+  --pin-bg:#20140f;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+html{ -webkit-text-size-adjust:100%; }
+
+body{
+  font-family:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:var(--cream);
+  overscroll-behavior-y:none;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* ---------- fixed wordmark ---------- */
+.brand{
+  position:fixed;
+  top:0; left:0; right:0;
+  z-index:20;
+  display:flex;
+  align-items:baseline;
+  gap:.6em;
+  padding:calc(env(safe-area-inset-top) + 15px) 20px 14px;
+  color:var(--ink);
+  pointer-events:none;
+}
+.brand__name{
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-size:1.2rem;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+.brand__sub{
+  font-size:.56rem;
+  letter-spacing:.34em;
+  text-transform:uppercase;
+  opacity:.6;
+}
+
+/* ---------- page ---------- */
+.page{
+  padding:calc(env(safe-area-inset-top) + 84px) 20px 8px;
+  max-width:760px;
+  margin:0 auto;
+}
+
+.intro{
+  text-align:center;
+  max-width:480px;
+  margin:0 auto 26px;
+}
+.intro__kicker{
+  font-size:.56rem;
+  letter-spacing:.34em;
+  text-transform:uppercase;
+  color:var(--burgundy);
+}
+.intro__title{
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-weight:500;
+  font-size:2.3rem;
+  line-height:1.1;
+  margin:.32em 0 .4em;
+}
+.intro__body{
+  font-size:.9rem;
+  line-height:1.5;
+  color:var(--ink);
+  opacity:.72;
+}
+
+/* ---------- interactive stage ----------
+   full-bleed to the viewport (breaks out of .page's max-width) so the
+   scene reads as part of the site, not a widget dropped on top of it */
+.stage{
+  position:relative;
+  width:100vw;
+  margin-left:calc(50% - 50vw);
+  padding:4px 0 24px;
+}
+
+.viewer{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  overflow:hidden;
+  background:var(--pin-bg);
+  box-shadow:inset 0 0 0 rgba(0,0,0,0);
+  transition:box-shadow .5s var(--ease);
+}
+.viewer.is-busy{
+  box-shadow:inset 0 0 110px rgba(10,6,4,.3);
+}
+
+.viewer__canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  background:var(--pin-bg);
+}
+
+/* ---------- hotspots ---------- */
+.dots{
+  position:absolute;
+  inset:0;
+  transition:opacity .35s ease;
+}
+.stage.is-active .dots{
+  opacity:0;
+  pointer-events:none;
+}
+
+.dot{
+  position:absolute;
+  left:var(--dx);
+  top:var(--dy);
+  transform:translate(-50%,-50%);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:0;
+  border:0;
+  background:none;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.dot__ring,
+.dot__core{
+  position:absolute;
+  left:0; top:0;
+  border-radius:50%;
+  pointer-events:none;
+}
+.dot__core{
+  width:14px; height:14px;
+  transform:translate(-50%,-50%);
+  background:#fff;
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,.35),
+    0 2px 10px rgba(0,0,0,.4);
+}
+.dot__ring{
+  width:14px; height:14px;
+  transform:translate(-50%,-50%);
+  border:1.5px solid rgba(255,255,255,.85);
+  animation:ping 2.2s var(--ease) infinite;
+}
+@keyframes ping{
+  0%   { width:14px; height:14px; opacity:.9; }
+  75%  { width:46px; height:46px; opacity:0; }
+  100% { width:46px; height:46px; opacity:0; }
+}
+.dot__tag{
+  position:relative;
+  margin-left:14px;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:.66rem;
+  font-weight:600;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:#fff;
+  white-space:nowrap;
+  background:rgba(20,12,9,.45);
+  -webkit-backdrop-filter:blur(6px);
+  backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.22);
+}
+.dot:hover .dot__tag,
+.dot:focus-visible .dot__tag{ background:rgba(20,12,9,.65); }
+.dot:active .dot__core{ transform:translate(-50%,-50%) scale(.85); }
+
+@media (prefers-reduced-motion:reduce){
+  .dot__ring{ animation:none; opacity:.6; }
+}
+
+/* ---------- liquid glass listino ---------- */
+.glass{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:min(90vw, 400px);
+  max-height:min(82vh, 480px);
+  padding:1px;                 /* lets the gradient ring show */
+  border-radius:30px;
+  opacity:var(--go,0);
+  visibility:hidden;
+  pointer-events:none;
+  z-index:5;
+  transform:
+    translate(-50%,-50%)
+    translateY(var(--gy,26px))
+    scale(var(--gs,.94));
+  /* thin light ring around a dark, smoked glass body — this is what
+     keeps text legible: the panel darkens whatever plays behind it
+     instead of just brightening/blurring it (see .glass__inner) */
+  background:linear-gradient(
+    150deg,
+    rgba(255,255,255,.42),
+    rgba(255,255,255,.04) 42%,
+    rgba(0,0,0,.05) 60%,
+    rgba(255,255,255,.24)
+  );
+  box-shadow:
+    0 28px 70px -18px rgba(0,0,0,.6),
+    0 10px 26px -14px rgba(0,0,0,.5);
+  will-change:opacity, transform;
+}
+.glass.is-live{
+  visibility:visible;
+  pointer-events:auto;
+}
+
+.glass__sheen{
+  position:absolute;
+  inset:0;
+  border-radius:30px;
+  overflow:hidden;
+  pointer-events:none;
+}
+.glass__sheen::after{
+  content:"";
+  position:absolute;
+  top:-60%;
+  left:0;
+  width:45%;
+  height:220%;
+  background:linear-gradient(100deg,
+    transparent,
+    rgba(255,255,255,.55),
+    transparent);
+  transform:rotate(9deg) translateX(-160%);
+  animation:sheen 6.5s var(--ease) infinite;
+}
+@keyframes sheen{
+  0%, 12%   { transform:rotate(9deg) translateX(-160%); }
+  60%, 100% { transform:rotate(9deg) translateX(520%); }
+}
+
+.glass__inner{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  max-height:min(82vh, 478px);
+  border-radius:29px;
+  padding:24px 22px 18px;
+  overflow:hidden;
+  color:#fff;
+  /* dark, warm-tinted glass: darkens the footage behind it (brightness
+     < 1) instead of lightening it, so white text stays legible whether
+     the frame behind is the bright LED desk or the dim rust wall */
+  background:linear-gradient(155deg,
+    rgba(34,20,15,.62),
+    rgba(20,12,9,.48));
+  -webkit-backdrop-filter:blur(26px) saturate(150%) brightness(.6);
+  backdrop-filter:blur(26px) saturate(150%) brightness(.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset 0 0 26px rgba(0,0,0,.3),
+    inset 0 -18px 30px -20px rgba(0,0,0,.4);
+  text-shadow:0 1px 6px rgba(0,0,0,.4);
+}
+/* frosted grain */
+.glass__inner::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.42;
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+.glass__over{
+  position:relative;
+  flex:none;
+  font-size:.56rem;
+  letter-spacing:.34em;
+  text-transform:uppercase;
+  opacity:.82;
+}
+.glass__title{
+  position:relative;
+  flex:none;
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-weight:500;
+  font-size:2.6rem;
+  line-height:1;
+  letter-spacing:.01em;
+  margin:.26em 0 .5em;
+}
+
+.svc{
+  position:relative;
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  overflow-y:auto;
+  padding-right:2px;
+  margin-bottom:16px;
+}
+.svc__item{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  padding-bottom:11px;
+  border-bottom:1px solid rgba(255,255,255,.2);
+}
+.svc__item:last-child{
+  padding-bottom:0;
+  border-bottom:0;
+}
+.svc__text{ min-width:0; }
+.svc__name{
+  display:block;
+  font-size:.96rem;
+  font-weight:600;
+  letter-spacing:.02em;
+}
+.svc__desc{
+  display:block;
+  font-size:.76rem;
+  line-height:1.4;
+  opacity:.82;
+  margin-top:2px;
+}
+.svc__price{
+  flex:none;
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-size:1.18rem;
+  font-weight:500;
+  white-space:nowrap;
+}
+
+.glass__back{
+  position:relative;
+  flex:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:100%;
+  padding:13px 18px;
+  border:0;
+  text-align:center;
+  font:inherit;
+  font-size:.72rem;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:#3a2018;
+  border-radius:14px;
+  background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.8));
+  box-shadow:
+    0 8px 20px -10px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,255,255,.95);
+  cursor:pointer;
+}
+.glass__back svg{ width:15px; height:15px; }
+.glass__back:active{ transform:translateY(1px); }
+
+/* ---------- fallback chips (also serve as the accessible menu) ---------- */
+.menu-fallback{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:4px 0 8px;
+}
+.chip{
+  padding:10px 18px;
+  border-radius:999px;
+  border:1px solid rgba(44,31,26,.25);
+  background:transparent;
+  font:inherit;
+  font-size:.72rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink);
+  cursor:pointer;
+}
+.chip:active{ background:rgba(44,31,26,.08); }
+
+/* ---------- closing / booking ---------- */
+.foot{
+  position:relative;
+  z-index:2;
+  background:var(--burgundy);
+  color:var(--cream);
+  text-align:center;
+  padding:60px 24px calc(env(safe-area-inset-bottom) + 52px);
+  margin-top:34px;
+}
+.foot__kicker{
+  font-size:.56rem;
+  letter-spacing:.34em;
+  text-transform:uppercase;
+  opacity:.8;
+}
+.foot__title{
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-weight:500;
+  font-size:2.3rem;
+  line-height:1.1;
+  margin:.3em 0 .5em;
+}
+.foot__line{
+  font-size:.9rem;
+  opacity:.85;
+  margin-bottom:26px;
+}
+.foot__actions{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  max-width:320px;
+  margin:0 auto;
+}
+.foot__actions a{
+  display:block;
+  padding:15px 18px;
+  border-radius:14px;
+  text-decoration:none;
+  font-size:.74rem;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+}
+.foot__actions a.is-primary{
+  color:var(--burgundy);
+  background:var(--cream);
+}
+.foot__actions a.is-ghost{
+  color:var(--cream);
+  border:1px solid rgba(244,236,229,.4);
+}
+.foot__addr{
+  margin-top:30px;
+  font-size:.7rem;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  opacity:.7;
+}
+
+/* ---------- preloader ---------- */
+.loader{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  background:var(--pin-bg);
+  transition:opacity .6s ease, visibility .6s ease;
+}
+.loader.is-hidden{ opacity:0; visibility:hidden; }
+.loader__mark{
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-size:1.1rem;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--cream);
+}
+.loader__bar{
+  width:min(220px,56vw);
+  height:2px;
+  border-radius:99px;
+  background:rgba(255,255,255,.16);
+  overflow:hidden;
+}
+.loader__bar i{
+  display:block;
+  height:100%;
+  width:0;
+  background:var(--gold);
+  transition:width .2s ease;
+}
+.loader__txt{
+  color:rgba(244,236,229,.65);
+  font-size:.56rem;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+}
+
+/* ---------- motion / no-JS ---------- */
+@media (prefers-reduced-motion:reduce){
+  .glass__sheen::after{ animation:none; opacity:0; }
+}
+
+.no-js .loader,
+.no-js .dots{ display:none; }
+.no-js .viewer__canvas{ display:none; }
+.no-js .menu-fallback{ display:none; }
+.no-js .glass{
+  position:static;
+  transform:none;
+  opacity:1;
+  visibility:visible;
+  margin:16px auto 0;
+  max-height:none;
+}
+.no-js .glass__inner{ max-height:none; }
+.no-js .glass__back{ display:none; }
+
+@media (min-width:560px){
+  .intro__title{ font-size:2.7rem; }
+  .glass__title{ font-size:3rem; }
+  .foot__title{ font-size:2.7rem; }
+}

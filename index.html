@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="it" class="no-js">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#20140f" />
+  <title>Anastasis Nail Rituals — Scegli il tuo rituale</title>
+  <meta name="description" content="Anastasis Nail Rituals: esplora lo studio e scopri il listino Nails e Hands SPA." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&display=swap" />
+  <link rel="stylesheet" href="./styles.css" />
+
+  <link rel="preload" as="image" href="./frames-nails/001.webp" />
+</head>
+<body>
+  <script>document.documentElement.classList.remove('no-js');</script>
+
+  <header class="brand">
+    <span class="brand__name">Anastasis</span>
+    <span class="brand__sub">Nail Rituals</span>
+  </header>
+
+  <main class="page">
+    <div class="intro">
+      <p class="intro__kicker">Entra nello studio</p>
+      <h1 class="intro__title">Scegli il tuo rituale</h1>
+      <p class="intro__body">Tocca la scrivania per il listino Nails, il tavolino per la Hands SPA.</p>
+    </div>
+
+    <!-- interactive viewer: idle wide shot with hotspots, click-to-zoom, liquid-glass listino -->
+    <section class="stage" id="stage">
+      <div class="viewer" id="viewer">
+        <canvas class="viewer__canvas" id="frames" aria-hidden="true"></canvas>
+
+        <div class="dots" id="dots">
+          <button class="dot" id="dot-nails" type="button" style="--dx:39.1%; --dy:74.5%;" aria-label="Apri il listino Nails">
+            <span class="dot__ring" aria-hidden="true"></span>
+            <span class="dot__core" aria-hidden="true"></span>
+            <span class="dot__tag">Nails</span>
+          </button>
+          <button class="dot" id="dot-spa" type="button" style="--dx:79.9%; --dy:85.5%;" aria-label="Apri il listino Hands SPA">
+            <span class="dot__ring" aria-hidden="true"></span>
+            <span class="dot__core" aria-hidden="true"></span>
+            <span class="dot__tag">Hands SPA</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- liquid-glass listino panel: sibling of .viewer so it can overflow the card -->
+      <section class="glass" id="glass" aria-label="Listino" aria-hidden="true">
+        <span class="glass__sheen" aria-hidden="true"></span>
+        <div class="glass__inner">
+          <p class="glass__over" id="glass-over">Anastasis Nail Rituals</p>
+          <h2 class="glass__title" id="glass-title">Nails</h2>
+
+          <ul class="svc" id="glass-list">
+            <!-- populated by sequence.js; static fallback for no-JS -->
+            <li class="svc__item">
+              <span class="svc__text">
+                <span class="svc__name">Ricostruzione</span>
+                <span class="svc__desc">Struttura, forma e lunghezza costruite su misura.</span>
+              </span>
+              <span class="svc__price">€45</span>
+            </li>
+            <li class="svc__item">
+              <span class="svc__text">
+                <span class="svc__name">Refill</span>
+                <span class="svc__desc">Riequilibrio e mantenimento ogni 3–4 settimane.</span>
+              </span>
+              <span class="svc__price">€30</span>
+            </li>
+            <li class="svc__item">
+              <span class="svc__text">
+                <span class="svc__name">Semipermanente</span>
+                <span class="svc__desc">Colore e lucentezza fino a 3 settimane.</span>
+              </span>
+              <span class="svc__price">€25</span>
+            </li>
+            <li class="svc__item">
+              <span class="svc__text">
+                <span class="svc__name">Rimozione</span>
+                <span class="svc__desc">Rimozione di gel o semipermanente.</span>
+              </span>
+              <span class="svc__price">€10</span>
+            </li>
+          </ul>
+
+          <button class="glass__back" id="glass-back" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M19 12H5" /><path d="m12 19-7-7 7-7" />
+            </svg>
+            Indietro
+          </button>
+        </div>
+      </section>
+    </section>
+
+    <div class="menu-fallback">
+      <button class="chip" id="chip-nails" type="button">Esplora Nails</button>
+      <button class="chip" id="chip-spa" type="button">Esplora Hands SPA</button>
+    </div>
+  </main>
+
+  <footer class="foot" id="prenota">
+    <p class="foot__kicker">Su appuntamento</p>
+    <h2 class="foot__title">Prenota il tuo rituale</h2>
+    <p class="foot__line">Ricostruzione · Refill · Hands SPA</p>
+    <div class="foot__actions">
+      <a class="is-primary" href="https://www.instagram.com/anastasis_nail_rituals" target="_blank" rel="noopener">Scrivimi in DM</a>
+    </div>
+    <p class="foot__addr">Anastasis Nail Rituals</p>
+  </footer>
+
+  <div class="loader" id="loader">
+    <span class="loader__mark">Anastasis</span>
+    <div class="loader__bar"><i id="loaderFill"></i></div>
+    <p class="loader__txt" id="loaderTxt">Caricamento 0%</p>
+  </div>
+
+  <script src="./sequence.js" defer></script>
+</body>
+</html>
