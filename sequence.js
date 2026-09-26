@@ -1,12 +1,13 @@
 /* ------------------------------------------------------------------ *
  * sequence.js — click-to-zoom viewer for Anastasis Nail Rituals.
  *
- * The stage opens on a still (frame 0, identical in both clips): the
- * wide shot of the studio, with two hotspots layered on top. Tapping
- * one plays that clip's 120 pre-split WebP frames forward (0 -> 119),
- * eased like a camera settling into place, then blooms a liquid-glass
- * listino panel open. Its "Indietro" button reverses the choreography:
- * panel away, frames 119 -> 0, hotspots back.
+ * The stage opens on a still (frame 0, the same wide shot in every
+ * clip): the studio, with a hotspot per station (Nails, Hands SPA,
+ * Corsi) layered on top. Tapping one plays that clip's pre-split
+ * WebP frames forward (each station has its own frame count and
+ * duration), eased like a camera settling into place, then blooms a
+ * liquid-glass listino panel open. Its "Indietro" button reverses the
+ * choreography: panel away, frames back to 0, hotspots back.
  *
  * Frames are canvas-drawn (not a <video>) because scrubbing
  * <video>.currentTime frame-by-frame is unreliable on iOS Safari.
@@ -17,14 +18,16 @@
 (function () {
   "use strict";
 
-  var N = 120;
   function pad3(i) { return String(i).padStart(3, "0"); }
+
+  var STATION_KEYS = ["nails", "spa", "courses"];
 
   var STATIONS = {
     nails: {
       dotId: "dot-nails",
       chipId: "chip-nails",
       folder: "./frames-nails/",
+      frameCount: 120,
       over: "Anastasis Nail Rituals",
       title: "Nails",
       durIn: 1300,
@@ -40,6 +43,7 @@
       dotId: "dot-spa",
       chipId: "chip-spa",
       folder: "./frames-spa/",
+      frameCount: 120,
       over: "Anastasis Nail Rituals",
       title: "Hands SPA",
       durIn: 2500,
@@ -49,6 +53,22 @@
         { name: "Massaggio mani", desc: "Massaggio dedicato con oli essenziali.", price: "€20" },
         { name: "Paraffina", desc: "Trattamento nutriente e rilassante.", price: "€15" },
         { name: "Manicure + Massaggio", desc: "Il rituale completo Hands SPA.", price: "€40" }
+      ]
+    },
+    courses: {
+      dotId: "dot-courses",
+      chipId: "chip-courses",
+      folder: "./frames-courses/",
+      frameCount: 49,
+      over: "Anastasis Nail Rituals",
+      title: "Corsi",
+      durIn: 1500,
+      durOut: 1300,
+      items: [
+        { name: "Corso base ricostruzione", desc: "Tecniche di ricostruzione in gel per principianti.", price: "€250" },
+        { name: "Corso nail art", desc: "Decorazioni e finiture avanzate.", price: "€150" },
+        { name: "Corso semipermanente", desc: "Applicazione e rimozione professionale.", price: "€120" },
+        { name: "Perfezionamento", desc: "Aggiornamento tecniche avanzate.", price: "€180" }
       ]
     }
   };
@@ -95,8 +115,9 @@
 
   var currentIdx = 0;
   function paint(images, idx) {
-    idx = idx < 0 ? 0 : idx > N - 1 ? N - 1 : idx;
-    var img = images && images[idx];
+    if (!images || !images.length) return;
+    idx = idx < 0 ? 0 : idx > images.length - 1 ? images.length - 1 : idx;
+    var img = images[idx];
     if (!img || !img.complete || !img.naturalWidth) return;
     currentIdx = idx;
     var cw = canvas.width, ch = canvas.height;
@@ -106,14 +127,16 @@
   }
 
   /* ---------- preload ---------- */
-  var totalFrames = N * 2;
+  var totalFrames = STATION_KEYS.reduce(function (sum, key) {
+    return sum + STATIONS[key].frameCount;
+  }, 0);
   var loadedFrames = 0;
   var firstPainted = false;
 
   function loadSequence(station, onEach) {
-    var images = new Array(N);
+    var images = new Array(station.frameCount);
     station.images = images;
-    for (var i = 0; i < N; i++) {
+    for (var i = 0; i < station.frameCount; i++) {
       (function (idx) {
         var im = new Image();
         im.decoding = "async";
@@ -231,10 +254,11 @@
     viewer.classList.add("is-busy");
     fillGlass(station);
 
+    var lastIdx = station.frameCount - 1;
     animate(station.durIn, easeOutQuad, function (e) {
-      paint(station.images, Math.round(e * (N - 1)));
+      paint(station.images, Math.round(e * lastIdx));
     }, function () {
-      paint(station.images, N - 1);
+      paint(station.images, lastIdx);
       state = "open";
       animateGlass(1, 420);
     });
@@ -245,9 +269,10 @@
     var station = STATIONS[activeKey];
     state = "closing";
 
+    var lastIdx = station.frameCount - 1;
     animateGlass(0, 320, function () {
       animate(station.durOut, easeInQuad, function (e) {
-        paint(station.images, Math.round((1 - e) * (N - 1)));
+        paint(station.images, Math.round((1 - e) * lastIdx));
       }, function () {
         paint(station.images, 0);
         state = "idle";
@@ -260,10 +285,11 @@
 
   /* ---------- wiring ---------- */
   function wire() {
-    document.getElementById(STATIONS.nails.dotId).addEventListener("click", function () { openStation("nails"); });
-    document.getElementById(STATIONS.spa.dotId).addEventListener("click", function () { openStation("spa"); });
-    document.getElementById(STATIONS.nails.chipId).addEventListener("click", function () { openStation("nails"); });
-    document.getElementById(STATIONS.spa.chipId).addEventListener("click", function () { openStation("spa"); });
+    STATION_KEYS.forEach(function (key) {
+      var station = STATIONS[key];
+      document.getElementById(station.dotId).addEventListener("click", function () { openStation(key); });
+      document.getElementById(station.chipId).addEventListener("click", function () { openStation(key); });
+    });
     glassBack.addEventListener("click", closeStation);
 
     document.addEventListener("keydown", function (e) {
@@ -318,8 +344,7 @@
   }
 
   resizeCanvas();
-  loadSequence(STATIONS.nails, onEach);
-  loadSequence(STATIONS.spa, onEach);
+  STATION_KEYS.forEach(function (key) { loadSequence(STATIONS[key], onEach); });
 
   /* safety net: start anyway if a few frames never settle */
   setTimeout(function () { if (!booted && loadedFrames >= totalFrames * 0.85) boot(); }, 12000);
