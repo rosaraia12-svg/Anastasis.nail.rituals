@@ -132,30 +132,17 @@
             paint(images, 0);
           }
           if (loadedFrames === totalFrames) boot();
+          // Best-effort pre-decode so the first drawImage() during
+          // playback doesn't have to decode on the spot (that on-demand
+          // decode is what makes an animation stutter the first time it
+          // reaches a frame it hasn't shown yet). This is a pure bonus:
+          // some WebKit/iOS builds never settle this promise at all, so
+          // it must NEVER gate readiness — only onload/onerror do that.
+          if (im.decode) { im.decode().catch(function () {}); }
         };
 
-        var onLoaded = function () {
-          // decode() fully decodes the bitmap ahead of time, so the very
-          // first drawImage() during playback never has to decode on the
-          // spot (that on-demand decode is what makes an animation
-          // stutter the first time it reaches a frame it hasn't shown
-          // yet). Some browsers/webviews never settle this promise
-          // though, so it only gets a short grace period — past that we
-          // move on rather than hang the whole preloader on one frame.
-          if (!im.decode) { finish(); return; }
-          var raced = false;
-          var give_up = setTimeout(function () {
-            if (!raced) { raced = true; finish(); }
-          }, 1200);
-          im.decode().then(function () {
-            if (!raced) { raced = true; clearTimeout(give_up); finish(); }
-          }, function () {
-            if (!raced) { raced = true; clearTimeout(give_up); finish(); }
-          });
-        };
-
-        if (im.complete) onLoaded();
-        else im.onload = onLoaded;
+        if (im.complete) finish();
+        else im.onload = finish;
         im.onerror = finish;
       })(i);
     }
