@@ -66,8 +66,6 @@
   var fill    = document.getElementById("loaderFill");
   var ltxt    = document.getElementById("loaderTxt");
 
-  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
   var state = "idle";          // idle | opening | open | closing
   var activeKey = null;
   var drawnW = 0, drawnH = 0;
@@ -173,7 +171,7 @@
 
   /* ---------- glass panel animation (CSS custom props) ---------- */
   function setGlassT(t) {
-    var e = reduce ? t : t * t * (3 - 2 * t);
+    var e = t * t * (3 - 2 * t);
     glass.style.setProperty("--go", e.toFixed(3));
     glass.style.setProperty("--gs", (0.94 + 0.06 * e).toFixed(3));
     glass.style.setProperty("--gy", (26 - 26 * e).toFixed(1) + "px");
@@ -186,7 +184,6 @@
   }
 
   function animate(durationMs, ease, onStep, onDone) {
-    if (reduce) { onStep(1); onDone(); return; }
     var start = null;
     function frame(now) {
       if (start === null) start = now;
@@ -209,7 +206,6 @@
   function animateGlass(to, durationMs, onDone) {
     var myGen = ++glassGen;
     var from = currentGlassT();
-    if (reduce) { setGlassT(to); if (onDone) onDone(); return; }
     var start = null;
     function frame(now) {
       if (myGen !== glassGen) return; // superseded by a newer call
