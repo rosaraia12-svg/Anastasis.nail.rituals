@@ -53,6 +53,7 @@
     }
   };
 
+  var intro   = document.getElementById("intro");
   var stage   = document.getElementById("stage");
   var viewer  = document.getElementById("viewer");
   var canvas  = document.getElementById("frames");
@@ -277,6 +278,24 @@
     window.addEventListener("orientationchange", function () {
       setTimeout(resizeCanvas, 300);
     });
+
+    // Fade the "Entra nello studio" intro out as soon as the page starts
+    // scrolling, so it never slides underneath the fixed brand header
+    // (which has no opaque background) and overlaps it.
+    var INTRO_FADE_PX = 50;
+    var introTicking = false;
+    function updateIntroFade() {
+      introTicking = false;
+      var p = Math.min(1, Math.max(0, window.scrollY / INTRO_FADE_PX));
+      intro.style.opacity = String(1 - p);
+      intro.style.transform = "translateY(" + (-p * 16).toFixed(1) + "px)";
+    }
+    window.addEventListener("scroll", function () {
+      if (introTicking) return;
+      introTicking = true;
+      requestAnimationFrame(updateIntroFade);
+    }, { passive: true });
+    updateIntroFade();
   }
 
   /* ---------- boot ---------- */
