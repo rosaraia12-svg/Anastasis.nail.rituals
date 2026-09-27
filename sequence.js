@@ -74,10 +74,9 @@
       durIn: 2500,
       durOut: 2200,
       items: [
-        { name: "Manicure SPA", desc: "Scrub, massaggio e cura completa delle mani.", price: "€35" },
-        { name: "Massaggio mani", desc: "Massaggio dedicato con oli essenziali.", price: "€20" },
-        { name: "Paraffina", desc: "Trattamento nutriente e rilassante.", price: "€15" },
-        { name: "Manicure + Massaggio", desc: "Il rituale completo Hands SPA.", price: "€40" }
+        { name: "Refresh Ritual", desc: "Detersione, scrub delicato, maschera, crema mani e breve massaggio.", price: "€30" },
+        { name: "Velvet Ritual", desc: "Detersione, scrub delicato, maschera idrogel intensiva, impacco caldo, peeling enzimatico, crema mani e breve massaggio.", price: "€45" },
+        { name: "Signature Ritual", desc: "Detersione in bagno di sale, scrub delicato, maschera idrogel intensiva/guanto al collagene, impacco caldo, peeling enzimatico, crema mani, patch occhi, olio e aromaterapia.", price: "€58" }
       ]
     },
     courses: {
