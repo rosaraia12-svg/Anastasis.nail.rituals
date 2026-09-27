@@ -44,7 +44,29 @@
             <span class="dot__core" aria-hidden="true"></span>
             <span class="dot__tag">Hands SPA</span>
           </button>
-          <button class="dot dot--tag-left" id="dot-courses" type="button" style="--dx:91.5%; --dy:30.0%;" aria-label="Apri il listino Corsi">
+          <button class="dot dot--tag-left" id="dot-courses" type="button" style="--dx:91.5%; --dy:30.0%;" aria-label="Scopri altro">
+            <span class="dot__ring" aria-hidden="true"></span>
+            <span class="dot__core" aria-hidden="true"></span>
+            <span class="dot__tag">Scopri altro</span>
+          </button>
+        </div>
+
+        <!-- revealed once the "Scopri altro" zoom settles on the paintings;
+             each sub-dot opens its own liquid-glass listino -->
+        <div class="subdots" id="subdots">
+          <button class="back-overview" id="back-overview" type="button" aria-label="Torna alla vista d'insieme">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M19 12H5" /><path d="m12 19-7-7 7-7" />
+            </svg>
+            Vista d'insieme
+          </button>
+          <button class="dot" id="dot-gelashpmu" type="button" style="--dx:62.5%; --dy:19.1%;" aria-label="Apri il listino Ge.lashpmu">
+            <span class="dot__ring" aria-hidden="true"></span>
+            <span class="dot__core" aria-hidden="true"></span>
+            <span class="dot__tag">Ge.lashpmu</span>
+          </button>
+          <button class="dot dot--tag-left" id="dot-corsi-sub" type="button" style="--dx:81.1%; --dy:38.2%;" aria-label="Apri il listino Corsi">
             <span class="dot__ring" aria-hidden="true"></span>
             <span class="dot__core" aria-hidden="true"></span>
             <span class="dot__tag">Corsi</span>
@@ -105,7 +127,7 @@
     <div class="menu-fallback">
       <button class="chip" id="chip-nails" type="button">Esplora Nails</button>
       <button class="chip" id="chip-spa" type="button">Esplora Hands SPA</button>
-      <button class="chip" id="chip-courses" type="button">Esplora Corsi</button>
+      <button class="chip" id="chip-courses" type="button">Scopri altro</button>
     </div>
   </main>
 

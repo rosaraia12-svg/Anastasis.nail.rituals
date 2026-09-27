@@ -60,15 +60,36 @@
       chipId: "chip-courses",
       folder: "./frames-courses/",
       frameCount: 49,
-      over: "Anastasis Nail Rituals",
-      title: "Corsi",
       durIn: 1500,
       durOut: 1300,
-      items: [
-        { name: "Corso base ricostruzione", desc: "Tecniche di ricostruzione in gel per principianti.", price: "€250" },
-        { name: "Corso nail art", desc: "Decorazioni e finiture avanzate.", price: "€150" },
-        { name: "Corso semipermanente", desc: "Applicazione e rimozione professionale.", price: "€120" },
-        { name: "Perfezionamento", desc: "Aggiornamento tecniche avanzate.", price: "€180" }
+      // a gateway station: the zoom lands on the paintings and reveals
+      // two more hotspots (see `subs`) instead of opening its own listino
+      gateway: true,
+      subs: [
+        {
+          key: "gelashpmu",
+          dotId: "dot-gelashpmu",
+          over: "Anastasis Nail Rituals",
+          title: "Ge.lashpmu",
+          items: [
+            { name: "Extension ciglia", desc: "Applicazione ciglio a ciglio, effetto naturale o intenso.", price: "€60" },
+            { name: "Lash lifting", desc: "Curvatura e volume delle ciglia naturali.", price: "€40" },
+            { name: "PMU sopracciglia", desc: "Trucco permanente, tecnica a effetto pelo.", price: "€280" },
+            { name: "PMU labbra", desc: "Trucco permanente labbra, colore naturale e definito.", price: "€220" }
+          ]
+        },
+        {
+          key: "corsi",
+          dotId: "dot-corsi-sub",
+          over: "Anastasis Nail Rituals",
+          title: "Corsi",
+          items: [
+            { name: "Corso base ricostruzione", desc: "Tecniche di ricostruzione in gel per principianti.", price: "€250" },
+            { name: "Corso nail art", desc: "Decorazioni e finiture avanzate.", price: "€150" },
+            { name: "Corso semipermanente", desc: "Applicazione e rimozione professionale.", price: "€120" },
+            { name: "Perfezionamento", desc: "Aggiornamento tecniche avanzate.", price: "€180" }
+          ]
+        }
       ]
     }
   };
@@ -83,12 +104,17 @@
   var glassTitle = document.getElementById("glass-title");
   var glassList  = document.getElementById("glass-list");
   var glassBack  = document.getElementById("glass-back");
+  var backOverview = document.getElementById("back-overview");
   var loader  = document.getElementById("loader");
   var fill    = document.getElementById("loaderFill");
   var ltxt    = document.getElementById("loaderTxt");
 
-  var state = "idle";          // idle | opening | open | closing
+  // idle | opening | open | subdots | sub-open | closing
+  //   idle -> opening -> open -> closing -> idle              (Nails, Hands SPA)
+  //   idle -> opening -> subdots <-> sub-open, subdots -> closing -> idle   (Corsi gateway)
+  var state = "idle";
   var activeKey = null;
+  var activeSub = null;
   var drawnW = 0, drawnH = 0;
 
   /* ---------- easing ----------
@@ -242,7 +268,10 @@
     requestAnimationFrame(frame);
   }
 
-  /* ---------- state machine ---------- */
+  /* ---------- state machine ----------
+     Nails / Hands SPA:  idle -> opening -> open -> closing -> idle
+     Corsi (gateway):    idle -> opening -> subdots <-> sub-open
+                                  subdots -> closing -> idle           */
   function openStation(key) {
     if (state !== "idle") return;
     var station = STATIONS[key];
@@ -252,20 +281,49 @@
     state = "opening";
     stage.classList.add("is-active");
     viewer.classList.add("is-busy");
-    fillGlass(station);
+    if (!station.gateway) fillGlass(station);
 
     var lastIdx = station.frameCount - 1;
     animate(station.durIn, easeOutQuad, function (e) {
       paint(station.images, Math.round(e * lastIdx));
     }, function () {
       paint(station.images, lastIdx);
-      state = "open";
-      animateGlass(1, 420);
+      if (station.gateway) {
+        state = "subdots";
+        stage.classList.add("is-subdots");
+      } else {
+        state = "open";
+        animateGlass(1, 420);
+      }
     });
   }
 
-  function closeStation() {
-    if (state !== "open") return;
+  function openSub(subKey) {
+    if (state !== "subdots") return;
+    var gateway = STATIONS[activeKey];
+    var sub = null;
+    for (var i = 0; i < gateway.subs.length; i++) {
+      if (gateway.subs[i].key === subKey) { sub = gateway.subs[i]; break; }
+    }
+    if (!sub) return;
+
+    activeSub = subKey;
+    state = "sub-open";
+    stage.classList.remove("is-subdots");
+    fillGlass(sub);
+    animateGlass(1, 420);
+  }
+
+  // "Indietro" inside the glass panel: closes whichever glass is open.
+  // A simple station's glass reverses the whole zoom back to idle; a
+  // gateway's sub-listino just drops back to its own subdots, since the
+  // paintings are still on screen and don't need to be re-zoomed.
+  function closeGlass() {
+    if (state === "open") closeToIdle();
+    else if (state === "sub-open") closeSubToDots();
+  }
+
+  function closeToIdle() {
     var station = STATIONS[activeKey];
     state = "closing";
 
@@ -280,6 +338,35 @@
         stage.classList.remove("is-active");
         viewer.classList.remove("is-busy");
       });
+    });
+  }
+
+  function closeSubToDots() {
+    state = "closing";
+    animateGlass(0, 320, function () {
+      activeSub = null;
+      state = "subdots";
+      stage.classList.add("is-subdots");
+    });
+  }
+
+  // "Vista d'insieme": leaves the gateway's subdots entirely, reversing
+  // the zoom back to the wide shot and its top-level hotspots.
+  function closeGateway() {
+    if (state !== "subdots") return;
+    var station = STATIONS[activeKey];
+    state = "closing";
+    stage.classList.remove("is-subdots");
+
+    var lastIdx = station.frameCount - 1;
+    animate(station.durOut, easeInQuad, function (e) {
+      paint(station.images, Math.round((1 - e) * lastIdx));
+    }, function () {
+      paint(station.images, 0);
+      state = "idle";
+      activeKey = null;
+      stage.classList.remove("is-active");
+      viewer.classList.remove("is-busy");
     });
   }
 

@@ -125,6 +125,45 @@ body{
   pointer-events:none;
 }
 
+/* revealed only once "Scopri altro" settles on the paintings; hidden
+   again the moment a sub-listino opens, so it doesn't clutter the glass */
+.subdots{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .35s ease;
+}
+.stage.is-subdots .subdots{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.back-overview{
+  position:absolute;
+  left:16px;
+  top:16px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 14px 8px 10px;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:999px;
+  background:rgba(20,12,9,.45);
+  color:#fff;
+  font:inherit;
+  font-size:.66rem;
+  font-weight:600;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  cursor:pointer;
+  -webkit-backdrop-filter:blur(6px);
+  backdrop-filter:blur(6px);
+}
+.back-overview svg{ width:14px; height:14px; }
+.back-overview:hover,
+.back-overview:focus-visible{ background:rgba(20,12,9,.65); }
+
 .dot{
   position:absolute;
   left:var(--dx);
@@ -555,7 +594,9 @@ body{
 }
 
 .no-js .loader,
-.no-js .dots{ display:none; }
+.no-js .dots,
+.no-js .subdots,
+.no-js .back-overview{ display:none; }
 .no-js .viewer__canvas{ display:none; }
 .no-js .menu-fallback{ display:none; }
 .no-js .glass{
