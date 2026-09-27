@@ -3,11 +3,18 @@
  *
  * The stage opens on a still (frame 0, the same wide shot in every
  * clip): the studio, with a hotspot per station (Nails, Hands SPA,
- * Corsi) layered on top. Tapping one plays that clip's pre-split
- * WebP frames forward (each station has its own frame count and
- * duration), eased like a camera settling into place, then blooms a
- * liquid-glass listino panel open. Its "Indietro" button reverses the
- * choreography: panel away, frames back to 0, hotspots back.
+ * "Scopri altro") layered on top. Tapping one plays that clip's
+ * pre-split WebP frames forward (each station has its own frame count
+ * and duration), eased like a camera settling into place.
+ *
+ * Nails and Hands SPA then bloom a liquid-glass listino panel open
+ * directly; its "Indietro" button reverses the whole choreography.
+ * "Scopri altro" is a gateway instead: the zoom lands on the wall of
+ * paintings and reveals two more hotspots (Ge.lashpmu, Corsi) rather
+ * than a listino. Picking one of those opens its own glass panel
+ * without any further zoom; its "Indietro" only drops back to the two
+ * painting hotspots, and a separate "Vista d'insieme" control reverses
+ * the zoom the rest of the way back to the wide shot.
  *
  * Frames are canvas-drawn (not a <video>) because scrubbing
  * <video>.currentTime frame-by-frame is unreliable on iOS Safari.
@@ -332,7 +339,12 @@
       animate(station.durOut, easeInQuad, function (e) {
         paint(station.images, Math.round((1 - e) * lastIdx));
       }, function () {
-        paint(station.images, 0);
+        // land on the one shared idle frame (Nails frame 0), not this
+        // station's own frame 0 — every clip is its own separate render
+        // of "the same" wide shot, close but not pixel-identical, so
+        // ending on the station's own frame made the rest look subtly
+        // different depending on which hotspot you'd just closed.
+        paint(STATIONS.nails.images, 0);
         state = "idle";
         activeKey = null;
         stage.classList.remove("is-active");
@@ -362,7 +374,7 @@
     animate(station.durOut, easeInQuad, function (e) {
       paint(station.images, Math.round((1 - e) * lastIdx));
     }, function () {
-      paint(station.images, 0);
+      paint(STATIONS.nails.images, 0); // land on the shared idle frame
       state = "idle";
       activeKey = null;
       stage.classList.remove("is-active");
@@ -376,11 +388,19 @@
       var station = STATIONS[key];
       document.getElementById(station.dotId).addEventListener("click", function () { openStation(key); });
       document.getElementById(station.chipId).addEventListener("click", function () { openStation(key); });
+      if (station.subs) {
+        station.subs.forEach(function (sub) {
+          document.getElementById(sub.dotId).addEventListener("click", function () { openSub(sub.key); });
+        });
+      }
     });
-    glassBack.addEventListener("click", closeStation);
+    glassBack.addEventListener("click", closeGlass);
+    if (backOverview) backOverview.addEventListener("click", closeGateway);
 
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && state === "open") closeStation();
+      if (e.key !== "Escape") return;
+      if (state === "open" || state === "sub-open") closeGlass();
+      else if (state === "subdots") closeGateway();
     });
 
     if ("ResizeObserver" in window) {

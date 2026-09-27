@@ -169,9 +169,6 @@ body{
   left:var(--dx);
   top:var(--dy);
   transform:translate(-50%,-50%);
-  display:flex;
-  align-items:center;
-  gap:8px;
   padding:0;
   border:0;
   background:none;
@@ -205,8 +202,10 @@ body{
   100% { width:46px; height:46px; opacity:0; }
 }
 .dot__tag{
-  position:relative;
-  margin-left:14px;
+  position:absolute;
+  left:14px;
+  top:50%;
+  transform:translateY(-50%);
   padding:6px 12px;
   border-radius:999px;
   font-size:.66rem;
@@ -224,9 +223,12 @@ body{
 .dot:focus-visible .dot__tag{ background:rgba(20,12,9,.65); }
 
 /* hotspots near the card's right edge: put the tag on the other side
-   of the dot so it can't spill past the viewer and get clipped */
-.dot--tag-left{ flex-direction:row-reverse; }
-.dot--tag-left .dot__tag{ margin-left:0; margin-right:14px; }
+   of the dot so it can't spill past the viewer and get clipped.
+   (Both .dot__tag and this override use plain absolute offsets, not
+   flex order — .dot__ring/.dot__core are already position:absolute,
+   so they never participate in flex layout, which made an earlier
+   flex-direction: row-reverse attempt here a no-op.) */
+.dot--tag-left .dot__tag{ left:auto; right:14px; }
 .dot:active .dot__core{ transform:translate(-50%,-50%) scale(.85); }
 
 @media (prefers-reduced-motion:reduce){
