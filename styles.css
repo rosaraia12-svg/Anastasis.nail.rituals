@@ -113,6 +113,7 @@ body{
   display:block;
   background:var(--pin-bg);
   transition:transform .42s var(--ease);
+  will-change:transform;
 }
 /* punch-in on a sub-hotspot's own painting, just before its listino
    opens; transform-origin is set inline per hotspot (sequence.js) */
