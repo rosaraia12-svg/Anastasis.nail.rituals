@@ -95,6 +95,10 @@ body{
 .viewer{
   position:relative;
   width:100%;
+  max-width:960px;      /* caps the canvas backing store on wide desktop
+                            screens — past this, drawImage() on every
+                            animation frame gets expensive enough to jank */
+  margin:0 auto;
   aspect-ratio:16/9;
   overflow:hidden;
   background:var(--pin-bg);
