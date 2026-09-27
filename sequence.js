@@ -66,15 +66,9 @@
       dotId: "dot-courses",
       chipId: "chip-courses",
       folder: "./frames-courses/",
-      // frames 1-14 are a synthetic digital zoom-in on the shared idle
-      // photo itself (not real footage): the real clip's own frame 0 is
-      // already zoomed in noticeably past the wide shot, so cutting to
-      // it directly read as a jarring jump. This still-image lead-in
-      // closes most of that gap first, before frame 15 hands off to the
-      // real, moving footage (frames 15-63).
-      frameCount: 63,
-      durIn: 1900,
-      durOut: 1650,
+      frameCount: 120,
+      durIn: 1400,
+      durOut: 1250,
       // a gateway station: the zoom lands on the paintings and reveals
       // two more hotspots (see `subs`) instead of opening its own listino
       gateway: true,
