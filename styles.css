@@ -112,6 +112,12 @@ body{
   height:100%;
   display:block;
   background:var(--pin-bg);
+  transition:transform .42s var(--ease);
+}
+/* punch-in on a sub-hotspot's own painting, just before its listino
+   opens; transform-origin is set inline per hotspot (sequence.js) */
+.viewer.is-punched .viewer__canvas{
+  transform:scale(1.35);
 }
 
 /* ---------- hotspots ---------- */

@@ -78,6 +78,10 @@
         {
           key: "gelashpmu",
           dotId: "dot-gelashpmu",
+          // where its dot sits (matches the --dx/--dy in index.html): the
+          // punch-in zoom on tap centers on this same point
+          zoomX: 58.2,
+          zoomY: 20,
           over: "Anastasis Nail Rituals",
           title: "Ge.lashpmu",
           items: [
@@ -90,6 +94,8 @@
         {
           key: "corsi",
           dotId: "dot-corsi-sub",
+          zoomX: 74.6,
+          zoomY: 28,
           over: "Anastasis Nail Rituals",
           title: "Corsi",
           items: [
@@ -326,7 +332,14 @@
     state = "sub-open";
     stage.classList.remove("is-subdots");
     fillGlass(sub);
-    animateGlass(1, 420);
+
+    // Punch in on the painting itself before the listino blooms open —
+    // a plain CSS transform on the already-painted canvas, not a new
+    // video: cheap, and it reads as "focusing in on what you tapped"
+    // rather than the panel just appearing over an unchanged photo.
+    canvas.style.transformOrigin = sub.zoomX + "% " + sub.zoomY + "%";
+    viewer.classList.add("is-punched");
+    setTimeout(function () { animateGlass(1, 420); }, 420);
   }
 
   // "Indietro" inside the glass panel: closes whichever glass is open.
@@ -364,6 +377,7 @@
   function closeSubToDots() {
     state = "closing";
     animateGlass(0, 320, function () {
+      viewer.classList.remove("is-punched"); // eases the canvas back out
       activeSub = null;
       state = "subdots";
       stage.classList.add("is-subdots");
