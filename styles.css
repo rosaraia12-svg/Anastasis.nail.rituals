@@ -384,6 +384,15 @@ body{
   padding-bottom:0;
   border-bottom:0;
 }
+.svc__header{
+  font-size:.6rem;
+  font-weight:600;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-top:6px;
+}
+.svc__header:first-child{ margin-top:0; }
 .svc__text{ min-width:0; }
 .svc__name{
   display:block;

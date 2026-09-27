@@ -40,10 +40,28 @@
       durIn: 1300,
       durOut: 1150,
       items: [
-        { name: "Ricostruzione", desc: "Struttura, forma e lunghezza costruite su misura.", price: "€45" },
-        { name: "Refill", desc: "Riequilibrio e mantenimento ogni 3–4 settimane.", price: "€30" },
-        { name: "Semipermanente", desc: "Colore e lucentezza fino a 3 settimane.", price: "€25" },
-        { name: "Rimozione", desc: "Rimozione di gel o semipermanente.", price: "€10" }
+        { header: "Ricostruzione" },
+        { name: "Corta", price: "€75" },
+        { name: "Media", price: "€80" },
+        { name: "Lunga", price: "€85" },
+        { name: "Estrema", price: "Su preventivo" },
+        { header: "Refill" },
+        { name: "Corto", price: "€55" },
+        { name: "Medio", price: "€60" },
+        { name: "Lungo", price: "€70" },
+        { name: "Tardivo / correttivo", price: "Da €60" },
+        { header: "Semipermanente" },
+        { name: "Rinforzato", price: "€45" },
+        { header: "Extra" },
+        { name: "Babyboomer", price: "€7" },
+        { name: "French", price: "€5" },
+        { name: "Decori", price: "Su preventivo" },
+        { header: "Mani" },
+        { name: "Manicure", price: "€25" },
+        { name: "Rimozione", price: "Da €10" },
+        { header: "Pedicure" },
+        { name: "Semipermanente classico", price: "€40" },
+        { name: "Ricostruzione alluci", price: "€10" }
       ]
     },
     spa: {
@@ -220,15 +238,21 @@
     glassList.innerHTML = "";
     station.items.forEach(function (it) {
       var li = document.createElement("li");
+      if (it.header) {
+        li.className = "svc__header";
+        li.textContent = it.header;
+        glassList.appendChild(li);
+        return;
+      }
       li.className = "svc__item";
       li.innerHTML =
         '<span class="svc__text">' +
           '<span class="svc__name"></span>' +
-          '<span class="svc__desc"></span>' +
+          (it.desc ? '<span class="svc__desc"></span>' : "") +
         '</span>' +
         '<span class="svc__price"></span>';
       li.querySelector(".svc__name").textContent = it.name;
-      li.querySelector(".svc__desc").textContent = it.desc;
+      if (it.desc) li.querySelector(".svc__desc").textContent = it.desc;
       li.querySelector(".svc__price").textContent = it.price;
       glassList.appendChild(li);
     });
