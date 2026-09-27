@@ -101,12 +101,9 @@
           zoomY: 20,
           over: "Anastasis Nail Rituals",
           title: "Ge.lashpmu",
-          items: [
-            { name: "Extension ciglia", desc: "Applicazione ciglio a ciglio, effetto naturale o intenso.", price: "€60" },
-            { name: "Lash lifting", desc: "Curvatura e volume delle ciglia naturali.", price: "€40" },
-            { name: "PMU sopracciglia", desc: "Trucco permanente, tecnica a effetto pelo.", price: "€280" },
-            { name: "PMU labbra", desc: "Trucco permanente labbra, colore naturale e definito.", price: "€220" }
-          ]
+          note: "Ciglia e trucco permanente sono a cura di Gaia. Scopri i suoi servizi e il listino sulla sua pagina.",
+          link: { href: "https://rosaraia12-svg.github.io/Ge.LashPmu/", label: "Vai alla pagina di Gaia" },
+          items: []
         },
         {
           key: "corsi",
@@ -115,12 +112,9 @@
           zoomY: 28,
           over: "Anastasis Nail Rituals",
           title: "Corsi",
-          items: [
-            { name: "Corso base ricostruzione", desc: "Tecniche di ricostruzione in gel per principianti.", price: "€250" },
-            { name: "Corso nail art", desc: "Decorazioni e finiture avanzate.", price: "€150" },
-            { name: "Corso semipermanente", desc: "Applicazione e rimozione professionale.", price: "€120" },
-            { name: "Perfezionamento", desc: "Aggiornamento tecniche avanzate.", price: "€180" }
-          ]
+          note: "Scrivimi in DM per costruire il tuo corso su misura, in base alle tue necessità e alle tecniche che vuoi imparare.",
+          link: { href: "https://www.instagram.com/anastasis_nail_rituals", label: "Scrivimi in DM" },
+          items: []
         }
       ]
     }
@@ -235,7 +229,30 @@
     glassOver.textContent = station.over;
     glassTitle.textContent = station.title;
     glassList.innerHTML = "";
-    station.items.forEach(function (it) {
+
+    // Some sub-listini are just a message + an outbound link rather than
+    // a price list (e.g. "ask in DM" or "see so-and-so's own page").
+    if (station.note) {
+      var noteLi = document.createElement("li");
+      var note = document.createElement("p");
+      note.className = "glass__note";
+      note.textContent = station.note;
+      noteLi.appendChild(note);
+      glassList.appendChild(noteLi);
+    }
+    if (station.link) {
+      var linkLi = document.createElement("li");
+      var a = document.createElement("a");
+      a.className = "glass__link";
+      a.href = station.link.href;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = station.link.label;
+      linkLi.appendChild(a);
+      glassList.appendChild(linkLi);
+    }
+
+    (station.items || []).forEach(function (it) {
       var li = document.createElement("li");
       if (it.header) {
         li.className = "svc__header";

@@ -389,6 +389,29 @@ body{
   margin-top:6px;
 }
 .svc__header:first-child{ margin-top:0; }
+
+.glass__note{
+  font-size:.88rem;
+  line-height:1.55;
+  opacity:.92;
+}
+.glass__link{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  padding:12px 16px;
+  border-radius:14px;
+  text-decoration:none;
+  font-size:.72rem;
+  font-weight:600;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#fff;
+  background:linear-gradient(180deg, rgba(255,255,255,.24), rgba(255,255,255,.1));
+  border:1px solid rgba(255,255,255,.4);
+}
+.glass__link:active{ transform:translateY(1px); }
 .svc__text{ min-width:0; }
 .svc__name{
   display:block;
