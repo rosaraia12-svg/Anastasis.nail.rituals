@@ -66,9 +66,15 @@
       dotId: "dot-courses",
       chipId: "chip-courses",
       folder: "./frames-courses/",
-      frameCount: 49,
-      durIn: 1500,
-      durOut: 1300,
+      // frames 1-14 are a synthetic digital zoom-in on the shared idle
+      // photo itself (not real footage): the real clip's own frame 0 is
+      // already zoomed in noticeably past the wide shot, so cutting to
+      // it directly read as a jarring jump. This still-image lead-in
+      // closes most of that gap first, before frame 15 hands off to the
+      // real, moving footage (frames 15-63).
+      frameCount: 63,
+      durIn: 1900,
+      durOut: 1650,
       // a gateway station: the zoom lands on the paintings and reveals
       // two more hotspots (see `subs`) instead of opening its own listino
       gateway: true,
@@ -240,9 +246,15 @@
     return isNaN(v) ? 0 : v;
   }
 
+  // Cancellable the same way animateGlass() is below: the state machine's
+  // own guards should already stop two frame-tweens from ever overlapping,
+  // but this makes that true by construction instead of by convention.
+  var animGen = 0;
   function animate(durationMs, ease, onStep, onDone) {
+    var myGen = ++animGen;
     var start = null;
     function frame(now) {
+      if (myGen !== animGen) return; // superseded by a newer call
       if (start === null) start = now;
       var t = Math.min(1, (now - start) / durationMs);
       onStep(ease(t));
