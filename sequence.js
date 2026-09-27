@@ -66,9 +66,11 @@
       dotId: "dot-courses",
       chipId: "chip-courses",
       folder: "./frames-courses/",
-      frameCount: 120,
-      durIn: 1400,
-      durOut: 1250,
+      // only the clip's first 5s (of 10s) are used: past that point the
+      // source starts shifting objects and duplicating the side table
+      frameCount: 60,
+      durIn: 1100,
+      durOut: 1000,
       // a gateway station: the zoom lands on the paintings and reveals
       // two more hotspots (see `subs`) instead of opening its own listino
       gateway: true,
