@@ -587,6 +587,19 @@ body{
   opacity:.7;
 }
 
+.foot__credit{
+  margin-top:10px;
+  font-size:.7rem;
+  letter-spacing:.08em;
+  opacity:.55;
+}
+.foot__credit a{
+  color:inherit;
+  text-decoration:none;
+  border-bottom:1px solid currentColor;
+}
+.foot__credit a:hover{ opacity:.85; }
+
 /* ---------- preloader ---------- */
 .loader{
   position:fixed;
